@@ -12,3 +12,12 @@
 *.exe
 *.out
 *.app
+
+#Visual Studio generated files
+Debug/
+Release/
+roguelike.opensdf
+roguelike.sdf
+roguelike.v12.suo
+roguelike/Debug/
+roguelike/Release/
