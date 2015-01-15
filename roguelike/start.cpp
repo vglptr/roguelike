@@ -48,7 +48,10 @@ int main()
 	GLfloat vertices[] = {
 		0.0f, 0.5f,
 		0.5f, -0.5f,
-		-0.5f, -0.5f 
+		-0.5f, -0.5f, 
+		0.25f, 0.5f,
+		1.25f, 0.5f,
+		0.75f, -0.5f
 	};
 
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
@@ -100,7 +103,7 @@ int main()
 		glClear(GL_COLOR_BUFFER_BIT);
 
 		// Draw a triangle from the 3 vertices
-		glDrawArrays(GL_TRIANGLES, 0, 3);
+		glDrawArrays(GL_TRIANGLES, 0, 6);
 		glfwSwapBuffers(window);
 
 	}
