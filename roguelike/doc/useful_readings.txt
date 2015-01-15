@@ -1,0 +1,6 @@
+https://open.gl
+http://www.sfml-dev.org/tutorials/2.2/start-vc.php
+http://stackoverflow.com/questions/23458089/multiple-objects-drawing-opengl
+http://gameprogrammingpatterns.com/game-loop.html
+http://gafferongames.com/game-physics/fix-your-timestep/
+http://www.koonsolo.com/news/dewitters-gameloop/
