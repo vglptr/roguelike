@@ -2,6 +2,7 @@
 #include <GLFW/glfw3.h>
 #include <iostream>
 #include <time.h>
+#include <math.h>
 
 // Shader sources
 const GLchar* vertexSource =
