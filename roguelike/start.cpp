@@ -3,6 +3,9 @@
 #include <iostream>
 #include <time.h>
 #include <math.h>
+#include "timer.hpp"
+
+GLFWwindow* window;
 
 // Shader sources
 const GLchar* vertexSource =
@@ -20,8 +23,7 @@ const GLchar* fragmentSource =
     "   outColor = vec4(triangleColor, 1.0);"
     "}";
 
-int main()
-{
+void initGlfw() {
 	//initializing glfw
 	glfwInit();
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
@@ -29,13 +31,19 @@ int main()
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 	glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
-	GLFWwindow* window = glfwCreateWindow(800, 600, "OpenGL", nullptr, nullptr); // Windowed
-	//GLFWwindow* window = glfwCreateWindow(800, 600, "OpenGL", glfwGetPrimaryMonitor(), nullptr); // Fullscreen
+	window = glfwCreateWindow(800, 600, "OpenGL", nullptr, nullptr); // Windowed
 	glfwMakeContextCurrent(window);
+	glfwSwapInterval(0);
+}
 
-	//initializing glew
+void initGlew() {
 	glewExperimental = GL_TRUE;
 	glewInit();
+}
+
+int main() {
+	initGlfw();
+	initGlew();
 
 	// Create Vertex Array Object
 	GLuint vao;
@@ -84,19 +92,20 @@ int main()
 	// Get the location of the color uniform
 	GLint uniColor = glGetUniformLocation(shaderProgram, "triangleColor");
 
+	Timer timer;
 	//basic main glfw loop
 	while (!glfwWindowShouldClose(window))
 	{
 		glfwPollEvents();
+
+		std::cout<<"delta: "<<timer.getDelta()<<" fps: "<<timer.getFps()<<std::endl;
 		
 		if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
 			glfwSetWindowShouldClose(window, GL_TRUE);
-
-
+		
 		// Set the color of the triangle
 		GLfloat time = (GLfloat)glfwGetTime();
-		std::cout << (sin(time) + 1.0f) / 2.0f << std::endl;
-
+		
 		glUniform3f(uniColor, (sin(time) + 1.0f) / 2.0f, 0.0f, 0.0f);
 
 		// Clear the screen to black
