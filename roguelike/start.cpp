@@ -4,6 +4,7 @@
 #include <time.h>
 #include <math.h>
 #include "timer.hpp"
+#include "vertexgenerator.hpp"
 
 GLFWwindow* window;
 
@@ -30,8 +31,8 @@ void initGlfw() {
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-	glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
-	window = glfwCreateWindow(800, 600, "OpenGL", nullptr, nullptr); // Windowed
+	glfwWindowHint(GLFW_RESIZABLE, GL_TRUE);
+	window = glfwCreateWindow(800, 800, "OpenGL", nullptr, nullptr); // Windowed
 	glfwMakeContextCurrent(window);
 	glfwSwapInterval(0);
 }
@@ -54,17 +55,13 @@ int main() {
 	GLuint vbo;
 	glGenBuffers(1, &vbo);
 
-	GLfloat vertices[] = {
-		0.0f, 0.5f,
-		0.5f, -0.5f,
-		-0.5f, -0.5f, 
-		0.25f, 0.5f,
-		1.25f, 0.5f,
-		0.75f, -0.5f
-	};
+	std::vector<GLfloat> vertices = VertexGenerator::generateMesh(0.1, 2);
+	GLfloat* v = &vertices[0];
 
+	std::cout<<"size of vertices: "<<vertices.size()<<std::endl;
+	
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, vertices.size() * 4, v, GL_STATIC_DRAW);
 
 	// Create and compile the vertex shader
 	GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
@@ -94,11 +91,8 @@ int main() {
 
 	Timer timer;
 	//basic main glfw loop
-	while (!glfwWindowShouldClose(window))
-	{
+	while (!glfwWindowShouldClose(window)) {
 		glfwPollEvents();
-
-		std::cout<<"delta: "<<timer.getDelta()<<" fps: "<<timer.getFps()<<std::endl;
 		
 		if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
 			glfwSetWindowShouldClose(window, GL_TRUE);
@@ -113,7 +107,7 @@ int main() {
 		glClear(GL_COLOR_BUFFER_BIT);
 
 		// Draw a triangle from the 3 vertices
-		glDrawArrays(GL_TRIANGLES, 0, 6);
+		glDrawArrays(GL_TRIANGLES, 0, vertices.size() * 4);
 		glfwSwapBuffers(window);
 
 	}
