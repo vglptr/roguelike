@@ -5,27 +5,11 @@
 #include <math.h>
 #include "timer.hpp"
 #include "vertexgenerator.hpp"
+#include "tile.hpp"
 
 GLFWwindow* window;
 
-// Shader sources
-const GLchar* vertexSource =
-    "#version 150 core\n"
-    "in vec2 position;"
-    "void main() {"
-    "   gl_Position = vec4(position, 0.0, 1.0);"
-    "}";
-
-const GLchar* fragmentSource =
-    "#version 150 core\n"
-    "out vec4 outColor;"
-	"uniform vec3 triangleColor;"
-    "void main() {"
-    "   outColor = vec4(triangleColor, 1.0);"
-    "}";
-
 void initGlfw() {
-	//initializing glfw
 	glfwInit();
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
@@ -45,79 +29,20 @@ void initGlew() {
 int main() {
 	initGlfw();
 	initGlew();
-
-	// Create Vertex Array Object
-	GLuint vao;
-	glGenVertexArrays(1, &vao);
-	glBindVertexArray(vao);
-
-	// Create a Vertex Buffer Object and copy the vertex data to it
-	GLuint vbo;
-	glGenBuffers(1, &vbo);
-
-	std::vector<GLfloat> vertices = VertexGenerator::generateMesh(0.1, 2);
-	GLfloat* v = &vertices[0];
-
-	std::cout<<"size of vertices: "<<vertices.size()<<std::endl;
-	
-	glBindBuffer(GL_ARRAY_BUFFER, vbo);
-	glBufferData(GL_ARRAY_BUFFER, vertices.size() * 4, v, GL_STATIC_DRAW);
-
-	// Create and compile the vertex shader
-	GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
-	glShaderSource(vertexShader, 1, &vertexSource, NULL);
-	glCompileShader(vertexShader);
-
-	// Create and compile the fragment shader
-	GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-	glShaderSource(fragmentShader, 1, &fragmentSource, NULL);
-	glCompileShader(fragmentShader);
-
-	// Link the vertex and fragment shader into a shader program
-	GLuint shaderProgram = glCreateProgram();
-	glAttachShader(shaderProgram, vertexShader);
-	glAttachShader(shaderProgram, fragmentShader);
-	glBindFragDataLocation(shaderProgram, 0, "outColor");
-	glLinkProgram(shaderProgram);
-	glUseProgram(shaderProgram);
-
-	// Specify the layout of the vertex data
-	GLint posAttrib = glGetAttribLocation(shaderProgram, "position");
-	glEnableVertexAttribArray(posAttrib);
-	glVertexAttribPointer(posAttrib, 2, GL_FLOAT, GL_FALSE, 0, 0);
-
-	// Get the location of the color uniform
-	GLint uniColor = glGetUniformLocation(shaderProgram, "triangleColor");
-
 	Timer timer;
-	//basic main glfw loop
+	Tile tile(0.5, 0.5, 0.5);
 	while (!glfwWindowShouldClose(window)) {
 		glfwPollEvents();
 		
 		if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
 			glfwSetWindowShouldClose(window, GL_TRUE);
 		
-		// Set the color of the triangle
-		GLfloat time = (GLfloat)glfwGetTime();
-		
-		glUniform3f(uniColor, (sin(time) + 1.0f) / 2.0f, 0.0f, 0.0f);
-
-		// Clear the screen to black
 		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
 
-		// Draw a triangle from the 3 vertices
-		glDrawArrays(GL_TRIANGLES, 0, vertices.size() * 4);
+		tile.draw(timer);
 		glfwSwapBuffers(window);
-
 	}
-	glDeleteProgram(shaderProgram);
-	glDeleteShader(fragmentShader);
-	glDeleteShader(vertexShader);
-
-	glDeleteBuffers(1, &vbo);
-
-	glDeleteVertexArrays(1, &vao);
 	glfwTerminate();
 	return 0;
 }

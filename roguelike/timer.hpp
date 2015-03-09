@@ -19,4 +19,8 @@ public:
 	int getFps() {
 		return 1 / delta;
 	}
+
+	GLfloat getTime() {
+		return (GLfloat)glfwGetTime();
+	}
 };
