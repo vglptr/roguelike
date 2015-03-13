@@ -6,9 +6,7 @@ class Tile{
 private:
 	std::vector<GLfloat> vertices;
 	GLint uniColor;
-	GLint uniModel;
-	GLint uniView;
-	GLint uniProjection;
+	GLint uniMvp;
 	GLuint shaderProgram;
 	GLuint fragmentShader;
 	GLuint vertexShader;
@@ -18,10 +16,7 @@ private:
 	const GLchar* vertexSource =
 		"#version 150 core\n"
 		"in vec2 position;"
-		"uniform mat4 model;"
-		"uniform mat4 view;"
-		"uniform mat4 projection;"
-		"mat4 mvp = projection * view * model;"
+		"uniform mat4 mvp;"
 		"void main() {"
 		"   gl_Position = mvp * vec4(position, 0.0, 1.0);"
 		"}";
@@ -76,6 +71,7 @@ public:
 		uniColor = glGetUniformLocation(shaderProgram, "color");
 		glUniform3f(uniColor, r, g, b);
 
+		//global cam, proj singletont csinalni
 		glm::mat4 model = glm::mat4(1.0f);
 		glm::mat4 view = glm::lookAt(
 			glm::vec3(4,3,3), // Camera is at (4,3,3), in World Space
@@ -83,14 +79,9 @@ public:
 			glm::vec3(0,1,0)  // Head is up (set to 0,-1,0 to look upside-down)
 		);
 		glm::mat4 projection = glm::perspective(45.0f, 4.0f / 3.0f, 0.1f, 100.0f);
-		
-		uniModel = glGetUniformLocation(shaderProgram, "model");
-		uniView = glGetUniformLocation(shaderProgram, "view");
-		uniProjection = glGetUniformLocation(shaderProgram, "projection");
-		
-		glUniformMatrix4fv(uniModel, 1, false, &model[0][0]);
-		glUniformMatrix4fv(uniView, 1, false, &view[0][0]);
-		glUniformMatrix4fv(uniProjection, 1, false, &projection[0][0]);
+		glm::mat4 pvm = projection * view * model;
+		uniMvp = glGetUniformLocation(shaderProgram, "mvp");
+		glUniformMatrix4fv(uniMvp, 1, false, &pvm[0][0]);
 	}
 
 	void draw(Timer& timer) {
