@@ -9,12 +9,11 @@ private:
 	glm::vec3 pos;
 	glm::vec3 lookAt;
 	glm::vec3 head;
+
+	glm::mat4 view;
+	glm::mat4 projection = glm::perspective(45.0f, 4.0f / 3.0f, 0.1f, 100.0f);
 	
-    Cam(glm::vec3 pos, glm::vec3 lookAt, glm::vec3 head) {
-		this.pos = pos;
-		this.lookAt = lookAt;
-		this.head = head;
-	};
+    Cam() { };
 
 public:
     static Cam& getInstance() {
@@ -23,19 +22,35 @@ public:
     }
 
 	void setPos(glm::vec3 pos) {
-		this.pos = pos;		
+		this->pos = pos;	
+		updateView();	
 	}
 
 	void setLookAt(glm::vec3 lookAt) {
-		this.lookAt = lookAt;
+		this->lookAt = lookAt;
+		updateView();
 	}
 
 	void setHead(glm::vec3 head) {
-		this.head = head;
+		this->head = head;
+		updateView();
+	}
+	
+	void translate(glm::vec3 t) {
+		pos += t;
+		updateView();
+	}
+
+	void updateView() {
+		view = glm::lookAt(pos, lookAt, head);
 	}
 
 	glm::mat4 getView() {
 		return glm::lookAt(pos, lookAt, head);
+	}
+
+	glm::mat4 getProjection() {
+		return projection;
 	}
 };
 

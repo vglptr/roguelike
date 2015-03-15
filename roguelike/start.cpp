@@ -6,6 +6,7 @@
 #include "timer.hpp"
 #include "vertexgenerator.hpp"
 #include "tile.hpp"
+#include <vector>
 
 GLFWwindow* window;
 
@@ -18,7 +19,7 @@ void initGlfw() {
 	glfwWindowHint(GLFW_RESIZABLE, GL_TRUE);
 	window = glfwCreateWindow(800, 800, "OpenGL", nullptr, nullptr); // Windowed
 	glfwMakeContextCurrent(window);
-	glfwSwapInterval(0);
+	glfwSwapInterval(1);
 }
 
 void initGlew() {
@@ -30,17 +31,32 @@ int main() {
 	initGlfw();
 	initGlew();
 	Timer timer;
-	Tile tile(0.5, 0.5, 0.5);
+	Cam& cam = Cam::getInstance();
+	cam.setPos(glm::vec3(4,3,3));
+	cam.setLookAt(glm::vec3(0,0,0));
+	cam.setHead(glm::vec3(0,1,0));
+
+	std::vector<Tile> tiles;
+	for(int i = 0; i < 10; i++) {
+		Tile tile;
+		tile.translate(glm::vec3(0.4 * i, 0.0, 0.0));
+		tiles.push_back(tile);
+	}
+
+	
 	while (!glfwWindowShouldClose(window)) {
 		glfwPollEvents();
 		
 		if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
 			glfwSetWindowShouldClose(window, GL_TRUE);
-		
+
+		//cam.translate(glm::vec3(timer.getDelta(), 0, 0));
 		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
 
-		tile.draw(timer);
+		for(int j = 0; j < 10; j++) {
+			tiles.at(j).draw(timer);
+		}
 		glfwSwapBuffers(window);
 	}
 	glfwTerminate();

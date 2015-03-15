@@ -1,6 +1,8 @@
 #include <iostream>
+#include <vector>
 #include "glm/glm.hpp"
 #include "glm/gtc/matrix_transform.hpp"
+#include "cam.hpp"
 
 class Tile{
 private:
@@ -12,8 +14,10 @@ private:
 	GLuint vertexShader;
 	GLuint vbo;
 	GLuint vao;
+	glm::mat4 model = glm::mat4(1.0f);
+	GLfloat r = 0.5, g = 0.5, b = 0.5;
 
-	const GLchar* vertexSource =
+	std::string vertexSource =
 		"#version 150 core\n"
 		"in vec2 position;"
 		"uniform mat4 mvp;"
@@ -21,7 +25,7 @@ private:
 		"   gl_Position = mvp * vec4(position, 0.0, 1.0);"
 		"}";
 
-	const GLchar* fragmentSource =
+	std::string fragmentSource =
 		"#version 150 core\n"
 		"out vec4 outColor;"
 		"uniform vec3 color;"
@@ -30,28 +34,34 @@ private:
 		"}";
 		
 public:
-	Tile(GLfloat r, GLfloat g, GLfloat b) {
+	Tile(){
 		// Create Vertex Array Object
-		
 		glGenVertexArrays(1, &vao);
 		glBindVertexArray(vao);
 
 		// Create a Vertex Buffer Object and copy the vertex data to it
 		glGenBuffers(1, &vbo);
+
+		std::cout<<"vao "<<vao<<std::endl;
+		std::cout<<"vbo "<<vbo<<std::endl;
+		std::cout<<"fs " <<vertexSource<<std::endl;
+		//std::cout<<"model "<<model<<std::endl;
 		
 		vertices = VertexGenerator::generateMesh(0.1, 2);
 		GLfloat* v = &vertices[0];
 		glBindBuffer(GL_ARRAY_BUFFER, vbo);
-		glBufferData(GL_ARRAY_BUFFER, vertices.size() * 4, v, GL_STATIC_DRAW);
+		glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(GLfloat), v, GL_STATIC_DRAW);
 
 		// Create and compile the vertex shader
 		vertexShader = glCreateShader(GL_VERTEX_SHADER);
-		glShaderSource(vertexShader, 1, &vertexSource, NULL);
+		const char* vs = vertexSource.c_str();
+		glShaderSource(vertexShader, 1, &vs, NULL);
 		glCompileShader(vertexShader);
 
 		// Create and compile the fragment shader
 		fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-		glShaderSource(fragmentShader, 1, &fragmentSource, NULL);
+		const char* fs = fragmentSource.c_str();
+		glShaderSource(fragmentShader, 1, &fs, NULL);
 		glCompileShader(fragmentShader);
 
 		// Link the vertex and fragment shader into a shader program
@@ -70,34 +80,31 @@ public:
 		// Get the location of the color uniform
 		uniColor = glGetUniformLocation(shaderProgram, "color");
 		glUniform3f(uniColor, r, g, b);
-
-		//global cam, proj singletont csinalni
-		glm::mat4 model = glm::mat4(1.0f);
-		glm::mat4 view = glm::lookAt(
-			glm::vec3(4,3,3), // Camera is at (4,3,3), in World Space
-			glm::vec3(0,0,0), // and looks at the origin
-			glm::vec3(0,1,0)  // Head is up (set to 0,-1,0 to look upside-down)
-		);
-		glm::mat4 projection = glm::perspective(45.0f, 4.0f / 3.0f, 0.1f, 100.0f);
-		glm::mat4 pvm = projection * view * model;
 		uniMvp = glGetUniformLocation(shaderProgram, "mvp");
-		glUniformMatrix4fv(uniMvp, 1, false, &pvm[0][0]);
 	}
 
 	void draw(Timer& timer) {
-		//std::cout<<timer.getTime()<<std::endl;
+		glm::mat4 view = Cam::getInstance().getView();
+		glm::mat4 projection = Cam::getInstance().getProjection();
+		glm::mat4 mvp = projection * view * model;
+		glUniformMatrix4fv(uniMvp, 1, false, &mvp[0][0]);
 		// Set the color of the triangle
 		//glUniform3f(uniColor, (sin(timer.getTime()) + 1.0f) / 2.0f, 0.0f, 0.0f);
-
-		// Draw a triangle from the 3 vertices
-		glDrawArrays(GL_TRIANGLES, 0, vertices.size() * 4);
+		glDrawArrays(GL_TRIANGLES, 0, vertices.size() * sizeof(GLfloat));
 	}
 
+	void translate(glm::vec3 t) {
+		model = glm::translate(model, t);
+	}	
+
 	virtual ~Tile() {
+		std::cout<<"dest"<<std::endl;
+/*
 		glDeleteProgram(shaderProgram);
 		glDeleteShader(fragmentShader);
 		glDeleteShader(vertexShader);
 		glDeleteBuffers(1, &vbo);
 		glDeleteVertexArrays(1, &vao);
+*/
 	}
 };
