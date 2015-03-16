@@ -7,8 +7,10 @@
 #include "vertexgenerator.hpp"
 #include "tile.hpp"
 #include <vector>
+#include <deque>
 
 GLFWwindow* window;
+Timer timer;
 
 void initGlfw() {
 	glfwInit();
@@ -27,43 +29,45 @@ void initGlew() {
 	glewInit();
 }
 
+void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods) {
+    if (key == GLFW_KEY_W && action == GLFW_PRESS) {
+		Cam::getInstance().translate(glm::vec3(0, 0, -timer.getDelta()));
+	}
+	if (key == GLFW_KEY_S && action == GLFW_PRESS) {
+		Cam::getInstance().translate(glm::vec3(0, 0, timer.getDelta()));
+	}
+}
+
 int main() {
 	initGlfw();
 	initGlew();
-	Timer timer;
+	glfwSetKeyCallback(window, key_callback);
 	Cam& cam = Cam::getInstance();
-	cam.setPos(glm::vec3(4,3,3));
+	cam.setPos(glm::vec3(0,0,10));
 	cam.setLookAt(glm::vec3(0,0,0));
 	cam.setHead(glm::vec3(0,1,0));
 
-	std::vector<Tile> tiles;
-	//std::deque<Tile> tiles;
+	std::deque<Tile> tiles;
 	for(int i = 0; i < 10; i++) {
-		//tiles.emplace_back(constuctor formal parameters);
-		//dont create temp instance here
-		//usage: tiles.back().tranlsate()...
-		//nothing from below here
-		Tile tile;
-		tile.translate(glm::vec3(0.4 * i, 0.0, 0.0));
-		//use dequeue instead, that one does not call ~Tile, use emplace
-		//tiles.emplace_back()
-		
-		tiles.push_back(tile);
+		for(int j = 0; j < 10; j++) {				
+			//tiles.emplace_back(constuctor formal parameters can go here);
+			tiles.emplace_back();
+			tiles.back().translate(glm::vec3(0.4 * i, 0.4 * j, 0.0));
+		}
 	}
 
-	
 	while (!glfwWindowShouldClose(window)) {
 		glfwPollEvents();
 		
 		if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
 			glfwSetWindowShouldClose(window, GL_TRUE);
 
-		//cam.translate(glm::vec3(timer.getDelta(), 0, 0));
+		//cam.translate(glm::vec3(0, 0, -timer.getDelta() * 4));
 		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
 
-		for(int j = 0; j < 10; j++) {
-			tiles.at(j).draw(timer);
+		for(int i = 0; i < tiles.size(); i++) {
+			tiles.at(i).draw(timer);
 		}
 		glfwSwapBuffers(window);
 	}

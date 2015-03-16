@@ -41,12 +41,6 @@ public:
 
 		// Create a Vertex Buffer Object and copy the vertex data to it
 		glGenBuffers(1, &vbo);
-
-		std::cout<<"vao "<<vao<<std::endl;
-		std::cout<<"vbo "<<vbo<<std::endl;
-		std::cout<<"fs " <<vertexSource<<std::endl;
-		//std::cout<<"model "<<model<<std::endl;
-		
 		vertices = VertexGenerator::generateMesh(0.1, 2);
 		GLfloat* v = &vertices[0];
 		glBindBuffer(GL_ARRAY_BUFFER, vbo);
@@ -98,13 +92,10 @@ public:
 	}	
 
 	virtual ~Tile() {
-		std::cout<<"dest"<<std::endl;
-/*
 		glDeleteProgram(shaderProgram);
 		glDeleteShader(fragmentShader);
 		glDeleteShader(vertexShader);
 		glDeleteBuffers(1, &vbo);
 		glDeleteVertexArrays(1, &vao);
-*/
 	}
 };
