@@ -37,9 +37,17 @@ int main() {
 	cam.setHead(glm::vec3(0,1,0));
 
 	std::vector<Tile> tiles;
+	//std::deque<Tile> tiles;
 	for(int i = 0; i < 10; i++) {
+		//tiles.emplace_back(constuctor formal parameters);
+		//dont create temp instance here
+		//usage: tiles.back().tranlsate()...
+		//nothing from below here
 		Tile tile;
 		tile.translate(glm::vec3(0.4 * i, 0.0, 0.0));
+		//use dequeue instead, that one does not call ~Tile, use emplace
+		//tiles.emplace_back()
+		
 		tiles.push_back(tile);
 	}
 
