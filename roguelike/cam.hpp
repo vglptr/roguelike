@@ -46,7 +46,8 @@ public:
 	}
 
 	glm::mat4 getView() {
-		return glm::lookAt(pos, lookAt, head);
+		//return glm::lookAt(pos, lookAt, head);
+		return view;
 	}
 
 	glm::mat4 getProjection() {

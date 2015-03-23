@@ -19,6 +19,7 @@ void initGlfw() {
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 	glfwWindowHint(GLFW_RESIZABLE, GL_TRUE);
+	glfwWindowHint(GLFW_SAMPLES, GL_TRUE);
 	window = glfwCreateWindow(800, 800, "OpenGL", nullptr, nullptr); // Windowed
 	glfwMakeContextCurrent(window);
 	glfwSwapInterval(1);
@@ -30,10 +31,10 @@ void initGlew() {
 }
 
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods) {
-    if (key == GLFW_KEY_W && action == GLFW_PRESS) {
+    if (key == GLFW_KEY_W) {
 		Cam::getInstance().translate(glm::vec3(0, 0, -timer.getDelta()));
 	}
-	if (key == GLFW_KEY_S && action == GLFW_PRESS) {
+	if (key == GLFW_KEY_S) {
 		Cam::getInstance().translate(glm::vec3(0, 0, timer.getDelta()));
 	}
 }
@@ -43,7 +44,7 @@ int main() {
 	initGlew();
 	glfwSetKeyCallback(window, key_callback);
 	Cam& cam = Cam::getInstance();
-	cam.setPos(glm::vec3(0,0,10));
+	cam.setPos(glm::vec3(5,5,10));
 	cam.setLookAt(glm::vec3(0,0,0));
 	cam.setHead(glm::vec3(0,1,0));
 
@@ -62,7 +63,7 @@ int main() {
 		if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
 			glfwSetWindowShouldClose(window, GL_TRUE);
 
-		//cam.translate(glm::vec3(0, 0, -timer.getDelta() * 4));
+		//cam.translate(glm::vec3(0, 0, -timer.getDelta() * 2));
 		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
 

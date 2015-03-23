@@ -82,7 +82,6 @@ public:
 		glm::mat4 projection = Cam::getInstance().getProjection();
 		glm::mat4 mvp = projection * view * model;
 		glUniformMatrix4fv(uniMvp, 1, false, &mvp[0][0]);
-		// Set the color of the triangle
 		//glUniform3f(uniColor, (sin(timer.getTime()) + 1.0f) / 2.0f, 0.0f, 0.0f);
 		glDrawArrays(GL_TRIANGLES, 0, vertices.size() * sizeof(GLfloat));
 	}
