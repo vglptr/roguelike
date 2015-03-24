@@ -38,7 +38,12 @@ public:
 	
 	void translate(glm::vec3 t) {
 		pos += t;
+		lookAt += t;
 		updateView();
+	}
+	
+	void setProjection(glm::mat4 projection) {
+		this->projection = projection;
 	}
 
 	void updateView() {

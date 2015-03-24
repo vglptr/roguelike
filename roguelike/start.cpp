@@ -6,11 +6,32 @@
 #include "timer.hpp"
 #include "vertexgenerator.hpp"
 #include "tile.hpp"
-#include <vector>
 #include <deque>
 
 GLFWwindow* window;
 Timer timer;
+
+void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods) {
+    if (key == GLFW_KEY_W) {
+		Cam::getInstance().translate(glm::vec3(0, 0, -timer.getDelta() * 3));
+	}
+	if (key == GLFW_KEY_S) {
+		Cam::getInstance().translate(glm::vec3(0, 0, timer.getDelta() * 3));
+	}
+	if (key == GLFW_KEY_A) {
+		Cam::getInstance().translate(glm::vec3(-timer.getDelta() * 3, 0, 0));
+	}
+	if (key == GLFW_KEY_D) {
+		Cam::getInstance().translate(glm::vec3(timer.getDelta() * 3, 0, 0));
+	}
+}
+
+void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
+    glViewport(0, 0, width, height);
+    Cam::getInstance().setProjection(
+    	glm::perspective(45.0f, width * 1.0f / height * 1.0f, 0.1f, 100.0f));
+}
+
 
 void initGlfw() {
 	glfwInit();
@@ -21,6 +42,9 @@ void initGlfw() {
 	glfwWindowHint(GLFW_RESIZABLE, GL_TRUE);
 	glfwWindowHint(GLFW_SAMPLES, GL_TRUE);
 	window = glfwCreateWindow(800, 800, "OpenGL", nullptr, nullptr); // Windowed
+	//glfwSetInputMode(window, GLFW_STICKY_KEYS, 1);
+	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
+	glfwSetKeyCallback(window, key_callback);
 	glfwMakeContextCurrent(window);
 	glfwSwapInterval(1);
 }
@@ -30,22 +54,13 @@ void initGlew() {
 	glewInit();
 }
 
-void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods) {
-    if (key == GLFW_KEY_W) {
-		Cam::getInstance().translate(glm::vec3(0, 0, -timer.getDelta()));
-	}
-	if (key == GLFW_KEY_S) {
-		Cam::getInstance().translate(glm::vec3(0, 0, timer.getDelta()));
-	}
-}
-
 int main() {
 	initGlfw();
 	initGlew();
-	glfwSetKeyCallback(window, key_callback);
+	
 	Cam& cam = Cam::getInstance();
 	cam.setPos(glm::vec3(5,5,10));
-	cam.setLookAt(glm::vec3(0,0,0));
+	cam.setLookAt(glm::vec3(5,5,0));
 	cam.setHead(glm::vec3(0,1,0));
 
 	std::deque<Tile> tiles;

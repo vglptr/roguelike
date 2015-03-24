@@ -13,6 +13,10 @@ public:
 		currentTime = (GLfloat)glfwGetTime();
 		delta = currentTime - lastTime;
 		lastTime = currentTime;
+		//even if getDelta() is not called for a long time we dont want to make it huge
+		if (delta > 1.0f / 30) {
+			delta = 1.0f / 30;
+		}
 		return delta;
 	}
 	
