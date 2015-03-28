@@ -4,7 +4,7 @@
 #include "glm/gtc/matrix_transform.hpp"
 #include "cam.hpp"
 
-class Tile{
+class Tile {
 private:
 	std::vector<GLfloat> vertices;
 	GLint uniColor;
