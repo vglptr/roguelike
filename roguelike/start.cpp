@@ -11,6 +11,10 @@
 
 GLFWwindow* window;
 Timer timer;
+int width, height;
+float horizontalAngle = 3.14f;
+float verticalAngle = 0.0f;
+float mouseSpeed = 1.0f;
 
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods) {
     if (key == GLFW_KEY_W) {
@@ -27,7 +31,29 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 	}
 }
 
-void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
+static void cursor_pos_callback(GLFWwindow* window, double xpos, double ypos) {
+	std::cout<<"x: "<<xpos<<" y: "<<ypos<<std::endl;
+	horizontalAngle += mouseSpeed * timer.getDelta() * float(width / 2 - xpos );
+	verticalAngle   += mouseSpeed * timer.getDelta() * float(height / 2 - ypos );
+	glm::vec3 direction(
+		cos(verticalAngle) * sin(horizontalAngle),
+		sin(verticalAngle),
+		cos(verticalAngle) * cos(horizontalAngle));
+	glm::vec3 right = glm::vec3(
+		sin(horizontalAngle - 3.14f/2.0f),
+		0,
+		cos(horizontalAngle - 3.14f/2.0f));
+	glm::vec3 up = glm::cross( right, direction );
+	
+	Cam::getInstance().setLookAt(Cam::getInstance().getPosition() + direction);
+	Cam::getInstance().setHead(up);
+	
+	glfwSetCursorPos(window, width/2, height/2);
+}
+
+void framebuffer_size_callback(GLFWwindow* window, int w, int h) {
+	width = w;
+	height = h;
     glViewport(0, 0, width, height);
     Cam::getInstance().setProjection(
     	glm::perspective(45.0f, width * 1.0f / height * 1.0f, 0.1f, 100.0f));
@@ -46,8 +72,10 @@ void initGlfw() {
 	//glfwSetInputMode(window, GLFW_STICKY_KEYS, 1);
 	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 	glfwSetKeyCallback(window, key_callback);
+	glfwSetCursorPosCallback(window, cursor_pos_callback);
 	glfwMakeContextCurrent(window);
 	glfwSwapInterval(1);
+	glfwGetWindowSize(window, &width, &height);
 }
 
 void initGlew() {

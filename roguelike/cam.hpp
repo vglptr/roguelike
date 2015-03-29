@@ -49,6 +49,10 @@ public:
 	void updateView() {
 		view = glm::lookAt(pos, lookAt, head);
 	}
+	
+	glm::vec3 getPosition() {
+		return pos;
+	}
 
 	glm::mat4 getView() {
 		//return glm::lookAt(pos, lookAt, head);
