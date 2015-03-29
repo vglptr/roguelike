@@ -7,6 +7,7 @@
 #include "vertexgenerator.hpp"
 #include "tile.hpp"
 #include <deque>
+#include <vector>
 
 GLFWwindow* window;
 Timer timer;
@@ -63,12 +64,14 @@ int main() {
 	cam.setLookAt(glm::vec3(5,5,0));
 	cam.setHead(glm::vec3(0,1,0));
 
-	std::deque<Tile> tiles;
-	for(int i = 0; i < 10; i++) {
-		for(int j = 0; j < 10; j++) {				
+	std::vector<Drawable*>* drawables = new std::vector<Drawable*>;
+	for(int i = 0; i < 100; i++) {
+		for(int j = 0; j < 100; j++) {				
 			//tiles.emplace_back(constuctor formal parameters can go here);
-			tiles.emplace_back();
-			tiles.back().translate(glm::vec3(0.4 * i, 0.4 * j, 0.0));
+			//tiles.emplace_back();
+			Tile* t = new Tile();
+			drawables->push_back(t);
+			t->translate(glm::vec3(0.4 * i, 0.4 * j, 0.0));
 		}
 	}
 
@@ -82,8 +85,8 @@ int main() {
 		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
 
-		for(int i = 0; i < tiles.size(); i++) {
-			tiles.at(i).draw(timer);
+		for(int i = 0; i < drawables->size(); i++) {
+			drawables->at(i)->draw(timer);
 		}
 		glfwSwapBuffers(window);
 	}
