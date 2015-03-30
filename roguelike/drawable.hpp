@@ -62,7 +62,7 @@ protected:
 	}
 
 public:	
-	void draw(Timer& timer) {
+	void draw(float delta) {
 		glm::mat4 view = Cam::getInstance().getView();
 		glm::mat4 projection = Cam::getInstance().getProjection();
 		glm::mat4 mvp = projection * view * model;

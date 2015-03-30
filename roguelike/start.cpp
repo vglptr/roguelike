@@ -10,32 +10,32 @@
 #include <vector>
 
 GLFWwindow* window;
-Timer timer;
-int width, height;
+int width;
+int height;
 float horizontalAngle = 3.14f;
 float verticalAngle = 0.0f;
-float mouseSpeed = 1.0f;
+float mouseSpeed = 0.5f;
+glm::vec3 camDirection;
 
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods) {
     if (key == GLFW_KEY_W) {
-		Cam::getInstance().translate(glm::vec3(0, 0, -timer.getDelta() * 3));
+		Cam::getInstance().translate(glm::vec3(camDirection * Timer::getInstance().getDelta() * 40.0f));
 	}
 	if (key == GLFW_KEY_S) {
-		Cam::getInstance().translate(glm::vec3(0, 0, timer.getDelta() * 3));
+		Cam::getInstance().translate(glm::vec3(-camDirection * Timer::getInstance().getDelta() * 40.0f));
 	}
 	if (key == GLFW_KEY_A) {
-		Cam::getInstance().translate(glm::vec3(-timer.getDelta() * 3, 0, 0));
+		Cam::getInstance().translate(glm::vec3(camDirection * Timer::getInstance().getDelta() * 40.0f));
 	}
 	if (key == GLFW_KEY_D) {
-		Cam::getInstance().translate(glm::vec3(timer.getDelta() * 3, 0, 0));
+		Cam::getInstance().translate(glm::vec3(camDirection * Timer::getInstance().getDelta() * 40.0f));
 	}
 }
 
-static void cursor_pos_callback(GLFWwindow* window, double xpos, double ypos) {
-	std::cout<<"x: "<<xpos<<" y: "<<ypos<<std::endl;
-	horizontalAngle += mouseSpeed * timer.getDelta() * float(width / 2 - xpos );
-	verticalAngle   += mouseSpeed * timer.getDelta() * float(height / 2 - ypos );
-	glm::vec3 direction(
+static void cursor_pos_callback(GLFWwindow* window, double xpos, double ypos) {	
+	horizontalAngle += mouseSpeed * Timer::getInstance().getDelta() * float(width / 2 - xpos );
+	verticalAngle   += mouseSpeed * Timer::getInstance().getDelta() * float(height / 2 - ypos );
+	camDirection = glm::vec3(
 		cos(verticalAngle) * sin(horizontalAngle),
 		sin(verticalAngle),
 		cos(verticalAngle) * cos(horizontalAngle));
@@ -43,10 +43,10 @@ static void cursor_pos_callback(GLFWwindow* window, double xpos, double ypos) {
 		sin(horizontalAngle - 3.14f/2.0f),
 		0,
 		cos(horizontalAngle - 3.14f/2.0f));
-	glm::vec3 up = glm::cross( right, direction );
+	glm::vec3 up = glm::cross( right, camDirection );
+	Cam::getInstance().setHead(up);	
+	Cam::getInstance().setLookAt(Cam::getInstance().getPosition() + camDirection);
 	
-	Cam::getInstance().setLookAt(Cam::getInstance().getPosition() + direction);
-	Cam::getInstance().setHead(up);
 	
 	glfwSetCursorPos(window, width/2, height/2);
 }
@@ -74,7 +74,7 @@ void initGlfw() {
 	glfwSetKeyCallback(window, key_callback);
 	glfwSetCursorPosCallback(window, cursor_pos_callback);
 	glfwMakeContextCurrent(window);
-	glfwSwapInterval(1);
+	glfwSwapInterval(0);
 	glfwGetWindowSize(window, &width, &height);
 }
 
@@ -88,8 +88,8 @@ int main() {
 	initGlew();
 	
 	Cam& cam = Cam::getInstance();
-	cam.setPos(glm::vec3(5,5,10));
-	cam.setLookAt(glm::vec3(5,5,0));
+	cam.setPos(glm::vec3(0,0,10));
+	cam.setLookAt(glm::vec3(0,0,0));
 	cam.setHead(glm::vec3(0,1,0));
 
 	std::vector<Drawable*> drawables;
@@ -105,17 +105,19 @@ int main() {
 	}
 
 	while (!glfwWindowShouldClose(window)) {
+		Timer::getInstance().updateDelta();
+		std::cout<<Timer::getInstance().getFps()<<std::endl;
 		glfwPollEvents();
 		
 		if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
 			glfwSetWindowShouldClose(window, GL_TRUE);
 
-		//cam.translate(glm::vec3(0, 0, -timer.getDelta() * 2));
+		//cam.translate(glm::vec3(0, 0, Timer::getInstance().getDelta() * 2));
 		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
 
-		for(int i = 0; i < drawables->size(); i++) {
-			drawables.at(i)->draw(timer);
+		for(int i = 0; i < drawables.size(); i++) {
+			drawables.at(i)->draw(Timer::getInstance().getDelta());
 		}
 		glfwSwapBuffers(window);
 	}
