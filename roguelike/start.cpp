@@ -46,8 +46,6 @@ static void cursor_pos_callback(GLFWwindow* window, double xpos, double ypos) {
 	glm::vec3 up = glm::cross( right, camDirection );
 	Cam::getInstance().setHead(up);	
 	Cam::getInstance().setLookAt(Cam::getInstance().getPosition() + camDirection);
-	
-	
 	glfwSetCursorPos(window, width/2, height/2);
 }
 
@@ -106,7 +104,6 @@ int main() {
 
 	while (!glfwWindowShouldClose(window)) {
 		Timer::getInstance().updateDelta();
-		std::cout<<Timer::getInstance().getFps()<<std::endl;
 		glfwPollEvents();
 		
 		if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
