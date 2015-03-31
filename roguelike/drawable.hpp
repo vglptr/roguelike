@@ -1,3 +1,6 @@
+#ifndef DRAWABLE_HPP
+#define DRAWABLE_HPP
+
 #include "glm/glm.hpp"
 
 class Drawable {
@@ -10,6 +13,7 @@ protected:
 	GLuint vertexShader;
 	GLuint vbo;
 	GLuint vao;
+	int coordinatesPerVertex;
 	glm::mat4 model = glm::mat4(1.0f);
 	GLfloat r = 0.5, g = 0.5, b = 0.5;
 	std::string vertexSource;
@@ -53,7 +57,7 @@ protected:
 		// Specify the layout of the vertex data
 		GLint posAttrib = glGetAttribLocation(shaderProgram, "position");
 		glEnableVertexAttribArray(posAttrib);
-		glVertexAttribPointer(posAttrib, 2, GL_FLOAT, GL_FALSE, 0, 0);
+		glVertexAttribPointer(posAttrib, coordinatesPerVertex, GL_FLOAT, GL_FALSE, 0, 0);
 
 		// Get the location of the color uniform
 		uniColor = glGetUniformLocation(shaderProgram, "color");
@@ -79,3 +83,5 @@ public:
 		glDeleteVertexArrays(1, &vao);
 	}
 };
+
+#endif //DRAWABLE_HPP

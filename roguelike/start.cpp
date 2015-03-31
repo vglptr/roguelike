@@ -6,6 +6,7 @@
 #include "timer.hpp"
 #include "vertexgenerator.hpp"
 #include "tile.hpp"
+#include "box.hpp"
 #include <deque>
 #include <vector>
 
@@ -91,9 +92,23 @@ int main() {
 	cam.setHead(glm::vec3(0,1,0));
 
 	std::vector<Drawable*> drawables;
-	drawables.reserve(100*100);
-	for(int i = 0; i < 100; i++) {
-		for(int j = 0; j < 100; j++) {				
+	std::vector<Drawable*> drawables2;
+	drawables.reserve(10 * 10 * 2);
+	
+	
+	
+	
+	for(int i = 0; i < 10; i++) {
+		for(int j = 0; j < 10; j++) {				
+			Box* b = new Box();
+			drawables2.push_back(b);
+			b->translate(glm::vec3(0.4 * i, 0.4 * j, 10.0));
+		}
+	}
+	
+	//last type gets drawn...opengl buffer overwritten?
+	for(int i = 0; i < 10; i++) {
+		for(int j = 0; j < 10; j++) {				
 			//tiles.emplace_back(constuctor formal parameters can go here);
 			//tiles.emplace_back();
 			Tile* t = new Tile();
@@ -101,6 +116,7 @@ int main() {
 			t->translate(glm::vec3(0.4 * i, 0.4 * j, 0.0));
 		}
 	}
+	
 
 	while (!glfwWindowShouldClose(window)) {
 		Timer::getInstance().updateDelta();
@@ -115,6 +131,7 @@ int main() {
 
 		for(int i = 0; i < drawables.size(); i++) {
 			drawables.at(i)->draw(Timer::getInstance().getDelta());
+			drawables2.at(i)->draw(Timer::getInstance().getDelta());
 		}
 		glfwSwapBuffers(window);
 	}

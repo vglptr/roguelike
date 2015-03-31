@@ -5,26 +5,26 @@
 #include "cam.hpp"
 #include "drawable.hpp"
 
-class Tile : public Drawable {
+class Box : public Drawable {
 public:
-	Tile(){
+	Box(){
 		fillVertices();
 		initShaders();
 		initGLData();
 	}
 	
 	void fillVertices() {
-		vertices = VertexGenerator::generateMesh(0.1, 2);
-		coordinatesPerVertex = 2;		
+		vertices = VertexGenerator::generateBox(0.1, 2);
+		coordinatesPerVertex = 3;		
 	}
 	
 	void initShaders() {
 		vertexSource =
 			"#version 150 core\n"
-			"in vec2 position;"
+			"in vec3 position;"
 			"uniform mat4 mvp;"
 			"void main() {"
-			"   gl_Position = mvp * vec4(position, 0.0, 1.0);"
+			"   gl_Position = mvp * vec4(position, 1.0);"
 			"}";
 
 		fragmentSource =
@@ -40,5 +40,5 @@ public:
 		model = glm::translate(model, t);
 	}	
 
-	virtual ~Tile() { }
+	virtual ~Box() { }
 };
