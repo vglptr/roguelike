@@ -15,7 +15,8 @@ public:
 	
 	void fillVertices() {
 		vertices = VertexGenerator::generateBox(0.1, 2);
-		coordinatesPerVertex = 3;		
+		coordinatesPerVertex = 3;
+		r = 1.0f; g = 0.3f; b = 0.3f; 		
 	}
 	
 	void initShaders() {
@@ -40,5 +41,6 @@ public:
 		model = glm::translate(model, t);
 	}	
 
-	virtual ~Box() { }
+	~Box() { 
+	}
 };

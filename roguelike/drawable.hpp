@@ -28,6 +28,7 @@ protected:
 		// Create Vertex Array Object
 		glGenVertexArrays(1, &vao);
 		glBindVertexArray(vao);
+		
 
 		// Create a Vertex Buffer Object and copy the vertex data to it
 		glGenBuffers(1, &vbo);
@@ -67,6 +68,8 @@ protected:
 
 public:	
 	void draw(float delta) {
+		glUseProgram(shaderProgram);
+		glBindVertexArray(vao);
 		glm::mat4 view = Cam::getInstance().getView();
 		glm::mat4 projection = Cam::getInstance().getProjection();
 		glm::mat4 mvp = projection * view * model;

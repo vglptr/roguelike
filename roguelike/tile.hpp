@@ -16,6 +16,7 @@ public:
 	void fillVertices() {
 		vertices = VertexGenerator::generateMesh(0.1, 2);
 		coordinatesPerVertex = 2;		
+		r = 0.3f; g = 1.0f; b = 0.3f; 
 	}
 	
 	void initShaders() {
@@ -40,5 +41,6 @@ public:
 		model = glm::translate(model, t);
 	}	
 
-	virtual ~Tile() { }
+	~Tile() {
+	 }
 };
