@@ -8,6 +8,7 @@
 class Tile : public Drawable {
 public:
 	Tile(){
+		redrawCode = "Tile";
 		fillVertices();
 		initShaders();
 		initGLData();

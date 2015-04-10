@@ -34,8 +34,8 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 }
 
 static void cursor_pos_callback(GLFWwindow* window, double xpos, double ypos) {	
-	horizontalAngle += mouseSpeed * Timer::getInstance().getDelta() * float(width / 2 - xpos );
-	verticalAngle   += mouseSpeed * Timer::getInstance().getDelta() * float(height / 2 - ypos );
+	horizontalAngle += mouseSpeed * float(width / 2 - xpos) * Timer::getInstance().getDelta();
+	verticalAngle   += mouseSpeed * float(height / 2 - ypos) * Timer::getInstance().getDelta();
 	camDirection = glm::vec3(
 		cos(verticalAngle) * sin(horizontalAngle),
 		sin(verticalAngle),
@@ -77,7 +77,7 @@ void initGlfw() {
 	glfwSetCursorPosCallback(window, cursor_pos_callback);
 	glfwMakeContextCurrent(window);
 	glEnable(GL_DEPTH_TEST);
-	glfwSwapInterval(1);
+	glfwSwapInterval(0);
 	glfwGetWindowSize(window, &width, &height);
 	
 }
@@ -104,8 +104,8 @@ int main() {
 	
 	
 		
-	for(int i = 0; i < 2; i++) {
-		for(int j = 0; j < 2; j++) {				
+	for(int i = 0; i < 50; i++) {
+		for(int j = 0; j < 50; j++) {				
 			Box* b = new Box();
 			drawables.push_back(b);
 			b->translate(glm::vec3(0.4 * i, 0.4 * j, 2.0));
@@ -114,17 +114,15 @@ int main() {
 	
 	
 	//last type gets drawn...opengl buffer overwritten?
-	for(int i = 0; i < 2; i++) {
-		for(int j = 0; j < 2; j++) {				
+	for(int i = 0; i < 50; i++) {
+		for(int j = 0; j < 50; j++) {				
 			//tiles.emplace_back(constuctor formal parameters can go here);
 			//tiles.emplace_back();
 			Tile* t = new Tile();
-			drawables2.push_back(t);
+			drawables.push_back(t);
 			t->translate(glm::vec3(0.4 * i, 0.4 * j, 0.0));
 		}
 	}
-
-	
 
 	while (!glfwWindowShouldClose(window)) {
 		Timer::getInstance().updateDelta();
@@ -139,8 +137,8 @@ int main() {
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		for(int i = 0; i < drawables.size(); i++) {
-			drawables.at(i)->draw(Timer::getInstance().getDelta());
-			drawables2.at(i)->draw(Timer::getInstance().getDelta());
+			drawables.at(i)->draw(Timer::getInstance().getDelta(), drawables, i);
+			//drawables2.at(i)->draw(Timer::getInstance().getDelta(), drawables, i);
 		}
 		glfwSwapBuffers(window);
 	}

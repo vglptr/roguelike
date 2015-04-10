@@ -6,6 +6,8 @@
 class Drawable {
 protected:
 	std::vector<GLfloat> vertices;
+	//this string is used to decide if redraw is needed in case of a different type of drawable
+	std::string redrawCode;
 	GLint uniColor;
 	GLint uniMvp;
 	GLuint shaderProgram;
@@ -29,7 +31,6 @@ protected:
 		glGenVertexArrays(1, &vao);
 		glBindVertexArray(vao);
 		
-
 		// Create a Vertex Buffer Object and copy the vertex data to it
 		glGenBuffers(1, &vbo);
 		glBindBuffer(GL_ARRAY_BUFFER, vbo);
@@ -67,9 +68,13 @@ protected:
 	}
 
 public:	
-	void draw(float delta) {
-		glUseProgram(shaderProgram);
-		glBindVertexArray(vao);
+	void draw(const float delta, const std::vector<Drawable*>& drawables, const int i) {
+		//if we drew the same kind of drawable in the prev draw call we dont change these
+		if(i == 0 || (drawables.at(i - 1)->redrawCode != redrawCode)) {
+			glUseProgram(shaderProgram);
+			glBindVertexArray(vao);
+		}
+
 		glm::mat4 view = Cam::getInstance().getView();
 		glm::mat4 projection = Cam::getInstance().getProjection();
 		glm::mat4 mvp = projection * view * model;

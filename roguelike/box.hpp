@@ -8,6 +8,7 @@
 class Box : public Drawable {
 public:
 	Box(){
+		redrawCode = "Box";
 		fillVertices();
 		initShaders();
 		initGLData();
@@ -16,7 +17,7 @@ public:
 	void fillVertices() {
 		vertices = VertexGenerator::generateBox(0.1, 2);
 		coordinatesPerVertex = 3;
-		r = 1.0f; g = 0.3f; b = 0.3f; 		
+		r = 1.0f; g = 0.3f; b = 0.3f; 			
 	}
 	
 	void initShaders() {
