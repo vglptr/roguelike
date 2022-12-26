@@ -1,2 +1,2 @@
 # roguelike
-Roguelike written in C++, using OpenGL
+Roguelike tile engine, written in C++, using OpenGL
